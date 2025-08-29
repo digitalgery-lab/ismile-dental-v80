@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iSmile Dental Clinic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #5DC0C5;
+            background-color: rgba(93, 192, 197, 0.05);
+        }
+        
+        .upload-area.dragover {
+            border-color: #5DC0C5;
+            background-color: rgba(93, 192, 197, 0.1);
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .table-row {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:hover {
+            background-color: rgba(93, 192, 197, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden" style="background: linear-gradient(135deg, #5DC0C5 0%, #4A90E2 25%, #667eea 50%, #764ba2 75%, #f093fb 100%);">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full animate-pulse"></div>
+        <div class="absolute top-1/4 -left-20 w-60 h-60 bg-white opacity-5 rounded-full animate-bounce" style="animation-duration: 3s;"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-white opacity-10 rounded-full animate-ping" style="animation-duration: 4s;"></div>
+        <div class="absolute top-3/4 left-1/3 w-32 h-32 bg-white opacity-5 rounded-full animate-pulse" style="animation-duration: 2s;"></div>
+    </div>
+    
+    <!-- Content wrapper -->
+    <div class="relative z-10">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Real-time Clock -->
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-6">
+            <div class="flex items-center justify-center">
+                <div class="text-center">
+                    <div class="flex items-center justify-center mb-2">
+                        <svg class="w-5 h-5 mr-2" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-600">Waktu Sekarang</span>
+                    </div>
+                    <div id="realTimeClock" class="text-2xl font-bold" style="color: #5DC0C5;">
+                        <!-- Real-time clock will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="https://lh3.googleusercontent.com/d/1XByZFqhud1IzkkjwHd1egzf7TcJDYGS4" alt="iSmile Dental Clinic Logo" class="w-24 h-24 object-contain mr-6" onerror="this.style.display='none';">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">iSmile Dental Clinic</h1>
+                        <p class="text-gray-600 mt-2">Laporan Admin Klinik</p>
+                    </div>
+                </div>
+                <div class="p-3 rounded-full" style="background-color: rgba(93, 192, 197, 0.2);">
+                    <svg class="w-8 h-8" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="bg-white rounded-xl shadow-lg mb-8">
+            <div class="flex border-b border-gray-200">
+                <button id="inputTab" class="flex-1 px-6 py-4 text-center font-semibold transition-all duration-200 rounded-tl-xl" style="background-color: #5DC0C5; color: white;">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Input Laporan
+                    </span>
+                </button>
+                <button id="viewTab" class="flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-gray-800 transition-all duration-200 hover:bg-gray-50">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Lihat Laporan
+                    </span>
+                </button>
+                <button id="manageTab" class="flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-gray-800 transition-all duration-200 rounded-tr-xl hover:bg-gray-50">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Kelola Data
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <!-- Input Laporan Tab -->
+        <div id="inputContent" class="tab-content">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form id="reportForm" class="space-y-6">
+                <!-- Row 1: Admin & Cabang -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="admin" class="block text-sm font-semibold text-gray-700 mb-2">Admin</label>
+                        <select id="admin" name="admin" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Pilih admin</option>
+                            <!-- Options will be loaded from Google Sheets -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="cabang" class="block text-sm font-semibold text-gray-700 mb-2">Cabang</label>
+                        <select id="cabang" name="cabang" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Pilih cabang klinik</option>
+                            <!-- Options will be loaded from Google Sheets -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Tanggal & Jenis -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="tanggal" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal</label>
+                        <input type="date" id="tanggal" name="tanggal" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                    </div>
+                    <div>
+                        <label for="jenis" class="block text-sm font-semibold text-gray-700 mb-2">Jenis Laporan</label>
+                        <select id="jenis" name="jenis" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Pilih jenis laporan</option>
+                            <!-- Options will be loaded from Google Sheets -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Deskripsi -->
+                <div>
+                    <label for="deskripsi" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="4" 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200 resize-none" style="--tw-ring-color: #5DC0C5;"
+                              placeholder="Jelaskan detail laporan dengan lengkap..."></textarea>
+                </div>
+
+                <!-- Upload Foto -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Foto Pendukung</label>
+                    <div class="upload-area rounded-lg p-8 text-center cursor-pointer" id="uploadArea">
+                        <input type="file" id="fotoInput" accept="image/*" class="hidden" multiple>
+                        <div id="uploadContent">
+                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <p class="text-lg font-medium text-gray-700 mb-2">Klik untuk Upload Foto</p>
+                            <p class="text-sm text-gray-500">atau drag & drop file gambar di sini</p>
+                            <p class="text-xs text-gray-400 mt-2">PNG, JPG, JPEG hingga 10MB (Maksimal 5 foto)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Area -->
+                    <div id="previewArea" class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4 hidden"></div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end pt-6">
+                    <button type="submit" 
+                            class="text-white font-semibold px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg" style="background-color: #5DC0C5; box-shadow: 0 4px 15px rgba(93, 192, 197, 0.3);" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                            Kirim Laporan
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Status Integration -->
+        <div class="mt-6 rounded-lg p-4" style="background-color: rgba(93, 192, 197, 0.1); border: 1px solid rgba(93, 192, 197, 0.3);">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="font-medium" style="color: #4AAFB3;">Terhubung dengan N8N Webhook</span>
+                </div>
+                <div class="text-xs" style="color: #4AAFB3;">
+                    aismiledentalclinic.app.n8n.cloud
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Kelola Data Tab -->
+        <div id="manageContent" class="tab-content hidden">
+            <!-- PIN Modal for Manage Data -->
+            <div id="managePinModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                    <div class="text-center">
+                        <div class="p-3 rounded-full mx-auto mb-4 w-16 h-16 flex items-center justify-center" style="background-color: rgba(93, 192, 197, 0.2);">
+                            <svg class="w-8 h-8" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Masukkan PIN Admin</h3>
+                        <p class="text-gray-600 mb-6">PIN khusus diperlukan untuk mengelola data dropdown</p>
+                        
+                        <!-- PIN Display -->
+                        <div class="mb-4">
+                            <input type="password" id="managePinDisplay" maxlength="4" readonly
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-bold tracking-widest focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                   style="--tw-ring-color: #5DC0C5;" placeholder="••••">
+                        </div>
+                        
+                        <!-- Numeric Keypad -->
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <button type="button" onclick="addManagePin('1')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">1</button>
+                            <button type="button" onclick="addManagePin('2')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">2</button>
+                            <button type="button" onclick="addManagePin('3')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">3</button>
+                            <button type="button" onclick="addManagePin('4')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">4</button>
+                            <button type="button" onclick="addManagePin('5')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">5</button>
+                            <button type="button" onclick="addManagePin('6')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">6</button>
+                            <button type="button" onclick="addManagePin('7')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">7</button>
+                            <button type="button" onclick="addManagePin('8')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">8</button>
+                            <button type="button" onclick="addManagePin('9')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">9</button>
+                            <button type="button" onclick="clearManagePin()" class="bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                                <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" onclick="addManagePin('0')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">0</button>
+                            <button type="button" onclick="deleteManagePin()" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                                <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button id="cancelManagePin" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                                Batal
+                            </button>
+                            <button id="submitManagePin" class="flex-1 px-4 py-2 text-white rounded-lg transition-all duration-200" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                                Masuk
+                            </button>
+                        </div>
+                        <div id="managePinError" class="text-red-500 text-sm mt-3 hidden">PIN salah! Coba lagi.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management Interface -->
+            <div id="dataManagement" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Admin Management -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Data Admin
+                            </h3>
+                            <button id="refreshAdmin" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200" title="Refresh Data">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Add Admin Form -->
+                        <div class="mb-6">
+                            <div class="flex gap-2">
+                                <input type="text" id="newAdmin" placeholder="Nama admin baru..." 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                       style="--tw-ring-color: #5DC0C5;">
+                                <button id="addAdmin" class="px-4 py-2 text-white rounded-lg transition-all duration-200" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Admin List -->
+                        <div id="adminList" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="text-center py-4 text-gray-500">
+                                <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Memuat data...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cabang Management -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                Data Cabang
+                            </h3>
+                            <button id="refreshCabang" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200" title="Refresh Data">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Add Cabang Form -->
+                        <div class="mb-6">
+                            <div class="flex gap-2">
+                                <input type="text" id="newCabang" placeholder="Nama cabang baru..." 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                       style="--tw-ring-color: #5DC0C5;">
+                                <button id="addCabang" class="px-4 py-2 text-white rounded-lg transition-all duration-200" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Cabang List -->
+                        <div id="cabangList" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="text-center py-4 text-gray-500">
+                                <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Memuat data...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jenis Laporan Management -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Jenis Laporan
+                            </h3>
+                            <button id="refreshJenis" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200" title="Refresh Data">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Add Jenis Form -->
+                        <div class="mb-6">
+                            <div class="flex gap-2">
+                                <input type="text" id="newJenis" placeholder="Jenis laporan baru..." 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                       style="--tw-ring-color: #5DC0C5;">
+                                <button id="addJenis" class="px-4 py-2 text-white rounded-lg transition-all duration-200" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Jenis List -->
+                        <div id="jenisList" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="text-center py-4 text-gray-500">
+                                <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Memuat data...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logout Button for Manage Data -->
+                <div class="mt-8 text-center">
+                    <button id="logoutManage" class="px-6 py-3 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            Keluar dari Kelola Data
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lihat Laporan Tab -->
+        <div id="viewContent" class="tab-content hidden">
+            <!-- PIN Modal -->
+            <div id="pinModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                    <div class="text-center">
+                        <div class="p-3 rounded-full mx-auto mb-4 w-16 h-16 flex items-center justify-center" style="background-color: rgba(93, 192, 197, 0.2);">
+                            <svg class="w-8 h-8" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Masukkan PIN</h3>
+                        <p class="text-gray-600 mb-6">PIN diperlukan untuk mengakses data laporan</p>
+                        
+                        <!-- PIN Display -->
+                        <div class="mb-4">
+                            <input type="password" id="pinDisplay" maxlength="4" readonly
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-bold tracking-widest focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                   style="--tw-ring-color: #5DC0C5;" placeholder="••••">
+                        </div>
+                        
+                        <!-- Numeric Keypad -->
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <button type="button" onclick="addPin('1')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">1</button>
+                            <button type="button" onclick="addPin('2')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">2</button>
+                            <button type="button" onclick="addPin('3')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">3</button>
+                            <button type="button" onclick="addPin('4')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">4</button>
+                            <button type="button" onclick="addPin('5')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">5</button>
+                            <button type="button" onclick="addPin('6')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">6</button>
+                            <button type="button" onclick="addPin('7')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">7</button>
+                            <button type="button" onclick="addPin('8')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">8</button>
+                            <button type="button" onclick="addPin('9')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">9</button>
+                            <button type="button" onclick="clearPin()" class="bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                                <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" onclick="addPin('0')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors duration-200">0</button>
+                            <button type="button" onclick="deletePin()" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                                <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button id="cancelPin" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                                Batal
+                            </button>
+                            <button id="submitPin" class="flex-1 px-4 py-2 text-white rounded-lg transition-all duration-200" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                                Masuk
+                            </button>
+                        </div>
+                        <div id="pinError" class="text-red-500 text-sm mt-3 hidden">PIN salah! Coba lagi.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Data Table -->
+            <div id="reportTable" class="bg-white rounded-xl shadow-lg p-8 hidden">
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" class="text-center py-8">
+                    <svg class="animate-spin h-8 w-8 mx-auto mb-4" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-gray-600">Memuat data dari Google Sheets...</p>
+                </div>
+
+                <!-- Search and Filter Controls -->
+                <div id="tableControls" class="mb-6 hidden">
+                    <!-- First Row: Search, Date, Reset, Refresh, Logout -->
+                    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-4">
+                        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center flex-1">
+                            <!-- Search Box -->
+                            <div class="relative flex-1 max-w-md">
+                                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <input type="text" id="searchInput" placeholder="Cari laporan..." 
+                                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                       style="--tw-ring-color: #5DC0C5;">
+                            </div>
+                            
+                            <!-- Date Filter -->
+                            <input type="date" id="dateFilter" placeholder="Filter berdasarkan tanggal" 
+                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" 
+                                   style="--tw-ring-color: #5DC0C5;">
+                            
+                            <!-- Reset Button -->
+                            <button id="resetSearch" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Reset
+                            </button>
+
+                            <!-- Refresh Button -->
+                            <button id="refreshData" class="px-4 py-2 text-white rounded-lg hover:bg-opacity-90 transition-all duration-200 flex items-center" style="background-color: #5DC0C5;">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                        
+                        <button id="logoutBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Keluar
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <!-- Second Row: Sort Filters -->
+                    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center mb-4">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+                            </svg>
+                            Sort berdasarkan:
+                        </div>
+                        
+                        <!-- Admin Filter -->
+                        <select id="adminFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Semua Admin</option>
+                        </select>
+                        
+                        <!-- Cabang Filter -->
+                        <select id="cabangFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Semua Cabang</option>
+                        </select>
+                        
+                        <!-- Jenis Filter -->
+                        <select id="jenisFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                            <option value="">Semua Jenis</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Third Row: Pagination Controls -->
+                    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                                </svg>
+                                Tampilkan:
+                            </div>
+                            <select id="itemsPerPage" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-200" style="--tw-ring-color: #5DC0C5;">
+                                <option value="5">5 data</option>
+                                <option value="10">10 data</option>
+                                <option value="15">15 data</option>
+                                <option value="20">20 data</option>
+                                <option value="25">25 data</option>
+                                <option value="50">50 data</option>
+                                <option value="all">Semua data</option>
+                            </select>
+                            <div id="dataInfo" class="text-sm text-gray-600">
+                                <!-- Data info will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Pagination Navigation -->
+                        <div id="paginationNav" class="flex items-center gap-2">
+                            <button id="firstPage" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" title="Halaman Pertama">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <button id="prevPage" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" title="Halaman Sebelumnya">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="pageNumbers" class="flex gap-1">
+                                <!-- Page numbers will be inserted here -->
+                            </div>
+                            <button id="nextPage" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" title="Halaman Selanjutnya">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                            <button id="lastPage" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" title="Halaman Terakhir">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 id="tableTitle" class="text-2xl font-bold text-gray-800 mb-6 hidden">Data Laporan</h2>
+                
+                <div id="tableContainer" class="hidden">
+                    <table class="w-full border-collapse border border-gray-300 table-fixed">
+                        <thead>
+                            <tr style="background-color: rgba(93, 192, 197, 0.1);">
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 w-12">No</th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors duration-200 w-20" onclick="sortTable('admin')">
+                                    <div class="flex items-center">
+                                        Admin
+                                        <svg id="adminSortIcon" class="w-3 h-3 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors duration-200 w-32" onclick="sortTable('cabang')">
+                                    <div class="flex items-center">
+                                        Cabang
+                                        <svg id="cabangSortIcon" class="w-3 h-3 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors duration-200 w-24" onclick="sortTable('tanggal')">
+                                    <div class="flex items-center">
+                                        Tanggal
+                                        <svg id="tanggalSortIcon" class="w-3 h-3 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors duration-200 w-20" onclick="sortTable('waktu')">
+                                    <div class="flex items-center">
+                                        Waktu
+                                        <svg id="waktuSortIcon" class="w-3 h-3 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors duration-200 w-28" onclick="sortTable('jenis')">
+                                    <div class="flex items-center">
+                                        Jenis
+                                        <svg id="jenisSortIcon" class="w-3 h-3 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700">Deskripsi</th>
+                                <th class="border border-gray-300 px-2 py-3 text-left font-semibold text-gray-700 w-20">Foto</th>
+                                <th class="border border-gray-300 px-2 py-3 text-center font-semibold text-gray-700 w-16">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Detail Modal -->
+        <div id="reportDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-gray-800">Detail Laporan</h2>
+                        <button onclick="document.getElementById('reportDetailModal').classList.add('hidden')" class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Admin</label>
+                            <div class="px-4 py-3 bg-gray-50 rounded-lg border">
+                                <span id="detailAdmin" class="text-gray-800"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Cabang</label>
+                            <div class="px-4 py-3 bg-gray-50 rounded-lg border">
+                                <span id="detailCabang" class="text-gray-800"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal</label>
+                            <div class="px-4 py-3 bg-gray-50 rounded-lg border">
+                                <span id="detailTanggal" class="text-gray-800"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Laporan</label>
+                            <div class="px-4 py-3 bg-gray-50 rounded-lg border">
+                                <span id="detailJenis" class="text-gray-800"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
+                        <div class="px-4 py-3 bg-gray-50 rounded-lg border min-h-[100px] max-h-[300px] overflow-y-auto">
+                            <p id="detailDeskripsi" class="text-gray-800 whitespace-pre-wrap break-words word-wrap"></p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Foto Pendukung</label>
+                        <div id="detailPhotos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Photos will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Fullscreen Modal -->
+        <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[100] hidden" onclick="document.getElementById('imageModal').classList.add('hidden')">
+            <div class="relative max-w-[95vw] max-h-[95vh] p-4" onclick="event.stopPropagation()">
+                <!-- Close button -->
+                <button onclick="document.getElementById('imageModal').classList.add('hidden')" class="absolute -top-2 -right-2 bg-white text-gray-800 hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center z-10 shadow-lg transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <!-- Image container -->
+                <div class="bg-white rounded-lg shadow-2xl overflow-hidden">
+                    <img id="fullscreenImage" src="" alt="Foto fullscreen" class="max-w-full max-h-[85vh] object-contain w-full">
+                    
+                    <!-- Image info bar -->
+                    <div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <p id="imageLabel" class="text-sm font-semibold text-gray-700"></p>
+                            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Klik di luar gambar atau tekan ESC untuk menutup</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete PIN Verification Modal -->
+        <div id="deletePinModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+                <div class="text-center">
+                    <div class="p-3 rounded-full mx-auto mb-4 w-16 h-16 flex items-center justify-center" style="background-color: rgba(239, 68, 68, 0.2);">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Verifikasi PIN untuk Hapus</h3>
+                    <div id="deleteMessage" class="text-gray-600 mb-4 text-left">
+                        <p class="mb-3">Masukkan PIN untuk menghapus laporan ini:</p>
+                        <div class="bg-gray-50 p-3 rounded-lg text-sm">
+                            <div id="deleteReportDetails"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Delete PIN Display -->
+                    <div class="mb-4">
+                        <input type="password" id="deletePinDisplay" maxlength="4" readonly
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-bold tracking-widest focus:ring-2 focus:border-transparent transition-all duration-200" 
+                               style="--tw-ring-color: #EF4444;" placeholder="••••">
+                    </div>
+                    
+                    <!-- Numeric Keypad for Delete -->
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <button type="button" onclick="addDeletePin('1')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">1</button>
+                        <button type="button" onclick="addDeletePin('2')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">2</button>
+                        <button type="button" onclick="addDeletePin('3')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">3</button>
+                        <button type="button" onclick="addDeletePin('4')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">4</button>
+                        <button type="button" onclick="addDeletePin('5')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">5</button>
+                        <button type="button" onclick="addDeletePin('6')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">6</button>
+                        <button type="button" onclick="addDeletePin('7')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">7</button>
+                        <button type="button" onclick="addDeletePin('8')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">8</button>
+                        <button type="button" onclick="addDeletePin('9')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">9</button>
+                        <button type="button" onclick="clearDeletePin()" class="bg-red-100 hover:bg-red-200 text-red-600 font-bold py-2 px-3 rounded-lg transition-colors duration-200">
+                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path>
+                            </svg>
+                        </button>
+                        <button type="button" onclick="addDeletePin('0')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">0</button>
+                        <button type="button" onclick="deleteDeletePin()" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 font-bold py-2 px-3 rounded-lg transition-colors duration-200">
+                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div id="deletePinError" class="text-red-500 text-sm mb-4 hidden">PIN salah! Coba lagi.</div>
+                    <p class="text-red-600 font-medium text-sm mb-6">⚠️ Tindakan ini tidak dapat dibatalkan!</p>
+                    <div class="flex gap-3">
+                        <button id="cancelDeletePin" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-semibold">
+                            Batal
+                        </button>
+                        <button id="confirmDeletePin" class="flex-1 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 font-semibold">
+                            Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Notification Modal -->
+        <div id="notificationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+                <div class="text-center">
+                    <div id="notificationIcon" class="p-3 rounded-full mx-auto mb-4 w-16 h-16 flex items-center justify-center">
+                        <!-- Icon will be inserted here -->
+                    </div>
+                    <h3 id="notificationTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
+                    <div id="notificationMessage" class="text-gray-600 mb-6 text-left"></div>
+                    <button id="notificationOk" class="w-full px-4 py-3 text-white rounded-lg transition-all duration-200 font-semibold" style="background-color: #5DC0C5;" onmouseover="this.style.backgroundColor='#4AAFB3'" onmouseout="this.style.backgroundColor='#5DC0C5'">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Real-time clock functionality
+        function updateRealTimeClock() {
+            const now = new Date();
+            const options = {
+                timeZone: 'Asia/Jakarta',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            
+            const jakartaTime = new Intl.DateTimeFormat('id-ID', options).format(now);
+            document.getElementById('realTimeClock').textContent = jakartaTime;
+        }
+
+        // Update clock immediately and then every second
+        updateRealTimeClock();
+        setInterval(updateRealTimeClock, 1000);
+
+        // Set tanggal hari ini sebagai default
+        document.getElementById('tanggal').valueAsDate = new Date();
+
+        // Custom notification system to replace alerts
+        function showNotification(title, message, type = 'info') {
+            const modal = document.getElementById('notificationModal');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const iconEl = document.getElementById('notificationIcon');
+            
+            titleEl.textContent = title;
+            messageEl.innerHTML = message.replace(/\n/g, '<br>');
+            
+            // Set icon and color based on type
+            if (type === 'success') {
+                iconEl.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                iconEl.innerHTML = `
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+            } else if (type === 'error') {
+                iconEl.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                iconEl.innerHTML = `
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+            } else if (type === 'warning') {
+                iconEl.style.backgroundColor = 'rgba(245, 158, 11, 0.2)';
+                iconEl.innerHTML = `
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                `;
+            } else {
+                iconEl.style.backgroundColor = 'rgba(93, 192, 197, 0.2)';
+                iconEl.innerHTML = `
+                    <svg class="w-8 h-8" style="color: #5DC0C5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Close notification modal
+        document.getElementById('notificationOk').addEventListener('click', () => {
+            document.getElementById('notificationModal').classList.add('hidden');
+        });
+
+        // Google Sheets configuration
+        const CORS_PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://cors-anywhere.herokuapp.com/'
+        ];
+        const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTF65KJ3EmYADtZYUCd7qJ4dbBQnH3FQTMf6Zgk2zaUh7eofF2e66Fygl2U0kRK5bqH6HvjMeeocKut/pub?gid=1053155914&single=true&output=csv';
+        
+        // Separate URLs for each dropdown data
+        const ADMIN_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTF65KJ3EmYADtZYUCd7qJ4dbBQnH3FQTMf6Zgk2zaUh7eofF2e66Fygl2U0kRK5bqH6HvjMeeocKut/pub?gid=66305843&single=true&output=csv';
+        const CABANG_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTF65KJ3EmYADtZYUCd7qJ4dbBQnH3FQTMf6Zgk2zaUh7eofF2e66Fygl2U0kRK5bqH6HvjMeeocKut/pub?gid=1137815486&single=true&output=csv';
+        const JENIS_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTF65KJ3EmYADtZYUCd7qJ4dbBQnH3FQTMf6Zgk2zaUh7eofF2e66Fygl2U0kRK5bqH6HvjMeeocKut/pub?gid=284884577&single=true&output=csv';
+        
+        // N8N Webhook URLs
+        const WEBHOOK_URL = 'https://aismiledentalclinic.app.n8n.cloud/webhook/laporan-submit';
+        const DELETE_WEBHOOK_URL = 'https://aismiledentalclinic.app.n8n.cloud/webhook/ismile-delete';
+
+        // Tab functionality
+        let isAuthenticated = false;
+        let isManageAuthenticated = false;
+        let reportData = [];
+        let filteredData = [];
+        let currentSort = { column: '', direction: 'asc' };
+        let dropdownData = {};
+        
+        // Pagination variables
+        let currentPage = 1;
+        let itemsPerPage = 5;
+        let totalPages = 1;
+        
+        // PIN variables
+        let currentPin = '';
+        let currentDeletePin = '';
+        let currentManagePin = '';
+        
+        // Management data
+        let managementData = {
+            admin: [],
+            cabang: [],
+            jenis: []
+        };
+
+        // Fetch with multiple proxy fallback
+        async function fetchWithFallback(url) {
+            // First try direct access
+            try {
+                console.log('Trying direct access to:', url);
+                const response = await fetch(url);
+                if (response.ok) {
+                    return await response.text();
+                }
+            } catch (error) {
+                console.log('Direct access failed:', error.message);
+            }
+            
+            // Try each CORS proxy
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                try {
+                    const proxyUrl = CORS_PROXIES[i] + encodeURIComponent(url);
+                    console.log(`Trying proxy ${i + 1}:`, proxyUrl);
+                    
+                    const response = await fetch(proxyUrl);
+                    if (response.ok) {
+                        const text = await response.text();
+                        console.log(`Proxy ${i + 1} successful`);
+                        return text;
+                    }
+                } catch (error) {
+                    console.log(`Proxy ${i + 1} failed:`, error.message);
+                }
+            }
+            
+            throw new Error('All connection methods failed');
+        }
+
+        // Load dropdown data from separate Google Sheets
+        async function loadDropdownData() {
+            try {
+                console.log('Loading dropdown data from separate sheets...');
+                
+                // Initialize dropdown data
+                dropdownData = {
+                    admin: new Set(),
+                    cabang: new Set(),
+                    jenis: new Set()
+                };
+                
+                // Load Admin data
+                try {
+                    const adminCsv = await fetchWithFallback(ADMIN_DATA_URL);
+                    const adminRows = adminCsv.split('\n').filter(row => row.trim() !== '');
+                    console.log('Admin rows found:', adminRows.length);
+                    
+                    for (let i = 1; i < adminRows.length; i++) { // Skip header
+                        const values = parseCSVRow(adminRows[i]);
+                        if (values[0] && values[0].trim()) {
+                            dropdownData.admin.add(values[0].trim());
+                        }
+                    }
+                    console.log('Admin data loaded:', Array.from(dropdownData.admin));
+                } catch (error) {
+                    console.error('Error loading admin data:', error);
+                }
+                
+                // Load Cabang data
+                try {
+                    const cabangCsv = await fetchWithFallback(CABANG_DATA_URL);
+                    const cabangRows = cabangCsv.split('\n').filter(row => row.trim() !== '');
+                    console.log('Cabang rows found:', cabangRows.length);
+                    
+                    for (let i = 1; i < cabangRows.length; i++) { // Skip header
+                        const values = parseCSVRow(cabangRows[i]);
+                        if (values[0] && values[0].trim()) {
+                            dropdownData.cabang.add(values[0].trim());
+                        }
+                    }
+                    console.log('Cabang data loaded:', Array.from(dropdownData.cabang));
+                } catch (error) {
+                    console.error('Error loading cabang data:', error);
+                }
+                
+                // Load Jenis data
+                try {
+                    const jenisCsv = await fetchWithFallback(JENIS_DATA_URL);
+                    const jenisRows = jenisCsv.split('\n').filter(row => row.trim() !== '');
+                    console.log('Jenis rows found:', jenisRows.length);
+                    
+                    for (let i = 1; i < jenisRows.length; i++) { // Skip header
+                        const values = parseCSVRow(jenisRows[i]);
+                        if (values[0] && values[0].trim()) {
+                            dropdownData.jenis.add(values[0].trim());
+                        }
+                    }
+                    console.log('Jenis data loaded:', Array.from(dropdownData.jenis));
+                } catch (error) {
+                    console.error('Error loading jenis data:', error);
+                }
+                
+                populateDropdowns();
+                
+                // Show success notification if at least one dataset loaded
+                if (dropdownData.admin.size > 0 || dropdownData.cabang.size > 0 || dropdownData.jenis.size > 0) {
+                    showNotification('Berhasil', 'Data dropdown berhasil dimuat dari Google Sheets', 'success');
+                } else {
+                    throw new Error('No dropdown data loaded');
+                }
+                
+            } catch (error) {
+                console.error('Error loading dropdown data:', error);
+                showNotification('Peringatan', 'Tidak dapat memuat data dropdown dari Google Sheets. Menggunakan data default.', 'warning');
+                setDefaultDropdownOptions();
+            }
+        }
+
+        // Populate dropdown options
+        function populateDropdowns() {
+            // Admin dropdown
+            const adminSelect = document.getElementById('admin');
+            adminSelect.innerHTML = '<option value="">Pilih admin</option>';
+            if (dropdownData.admin) {
+                Array.from(dropdownData.admin).sort().forEach(admin => {
+                    adminSelect.innerHTML += `<option value="${admin}">${admin}</option>`;
+                });
+            }
+            
+            // Cabang dropdown
+            const cabangSelect = document.getElementById('cabang');
+            cabangSelect.innerHTML = '<option value="">Pilih cabang klinik</option>';
+            if (dropdownData.cabang) {
+                Array.from(dropdownData.cabang).sort().forEach(cabang => {
+                    cabangSelect.innerHTML += `<option value="${cabang}">${cabang}</option>`;
+                });
+            }
+            
+            // Jenis dropdown
+            const jenisSelect = document.getElementById('jenis');
+            jenisSelect.innerHTML = '<option value="">Pilih jenis laporan</option>';
+            if (dropdownData.jenis) {
+                Array.from(dropdownData.jenis).sort().forEach(jenis => {
+                    jenisSelect.innerHTML += `<option value="${jenis}">${jenis}</option>`;
+                });
+            }
+        }
+
+        // Set default dropdown options if Google Sheets fails
+        function setDefaultDropdownOptions() {
+            dropdownData = {
+                admin: new Set(['SIKO', 'LUSI']),
+                cabang: new Set(['Cab Gusti Hamzah', 'Cab Gaia Mall']),
+                jenis: new Set(['Rating Px', 'Bukti TRF', 'Notes Invoice', 'Notes Promo', 'Invoice LAB GIGI', 'Lainnya'])
+            };
+            populateDropdowns();
+        }
+
+        // Load dropdown data on page load
+        loadDropdownData();
+
+        // Tab switching
+        document.getElementById('inputTab').addEventListener('click', () => {
+            switchTab('input');
+        });
+
+        document.getElementById('viewTab').addEventListener('click', () => {
+            if (!isAuthenticated) {
+                switchTab('view');
+                document.getElementById('pinModal').classList.remove('hidden');
+            } else {
+                switchTab('view');
+                document.getElementById('pinModal').classList.add('hidden');
+                document.getElementById('reportTable').classList.remove('hidden');
+                loadGoogleSheetsData();
+            }
+        });
+
+        document.getElementById('manageTab').addEventListener('click', () => {
+            if (!isManageAuthenticated) {
+                switchTab('manage');
+                document.getElementById('managePinModal').classList.remove('hidden');
+            } else {
+                switchTab('manage');
+                document.getElementById('managePinModal').classList.add('hidden');
+                document.getElementById('dataManagement').classList.remove('hidden');
+                loadManagementData();
+            }
+        });
+
+        function switchTab(tab) {
+            const inputTab = document.getElementById('inputTab');
+            const viewTab = document.getElementById('viewTab');
+            const manageTab = document.getElementById('manageTab');
+            const inputContent = document.getElementById('inputContent');
+            const viewContent = document.getElementById('viewContent');
+            const manageContent = document.getElementById('manageContent');
+
+            // Reset all tabs
+            inputTab.style.backgroundColor = '';
+            inputTab.style.color = '#6b7280';
+            viewTab.style.backgroundColor = '';
+            viewTab.style.color = '#6b7280';
+            manageTab.style.backgroundColor = '';
+            manageTab.style.color = '#6b7280';
+            
+            // Hide all content
+            inputContent.classList.add('hidden');
+            viewContent.classList.add('hidden');
+            manageContent.classList.add('hidden');
+
+            if (tab === 'input') {
+                // Style active input tab
+                inputTab.style.backgroundColor = '#5DC0C5';
+                inputTab.style.color = 'white';
+                inputContent.classList.remove('hidden');
+            } else if (tab === 'view') {
+                // Style active view tab
+                viewTab.style.backgroundColor = '#5DC0C5';
+                viewTab.style.color = 'white';
+                viewContent.classList.remove('hidden');
+            } else if (tab === 'manage') {
+                // Style active manage tab
+                manageTab.style.backgroundColor = '#5DC0C5';
+                manageTab.style.color = 'white';
+                manageContent.classList.remove('hidden');
+            }
+        }
+
+        // Google Sheets data loading with multiple fallback methods
+        async function loadGoogleSheetsData() {
+            try {
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+                document.getElementById('tableControls').classList.add('hidden');
+                document.getElementById('tableTitle').classList.add('hidden');
+                document.getElementById('tableContainer').classList.add('hidden');
+
+                console.log('Loading report data from Google Sheets...');
+                const csvText = await fetchWithFallback(GOOGLE_SHEETS_CSV_URL);
+                
+                // Parse CSV data
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, ''));
+                
+                reportData = [];
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const values = parseCSVRow(rows[i]);
+                    if (values.length >= 6) { // Ensure we have enough columns
+                        // Parse photos from columns 6-10 (FOTO 1, FOTO 2, FOTO 3, FOTO 4, FOTO 5)
+                        const photos = [];
+                        const photoUrls = [];
+                        
+                        // Check columns 6-10 for FOTO 1-5
+                        for (let photoIndex = 6; photoIndex <= 10; photoIndex++) {
+                            if (values[photoIndex] && values[photoIndex].trim()) {
+                                const photoUrl = values[photoIndex].trim();
+                                photos.push({
+                                    label: `FOTO ${photoIndex - 5}`,
+                                    url: photoUrl
+                                });
+                                photoUrls.push(photoUrl);
+                            }
+                        }
+                        
+                        const report = {
+                            admin: values[0] || '',
+                            cabang: values[1] || '',
+                            tanggal: values[2] || '',
+                            waktu: values[3] || '',
+                            jenis: values[4] || '',
+                            deskripsi: values[5] || '',
+                            photos: photos,
+                            photoUrls: photoUrls,
+                            timestamp: values[11] || new Date().toISOString(),
+                            rowNumber: i + 1 // Store row number for deletion
+                        };
+                        reportData.push(report);
+                    }
+                }
+
+                filteredData = [...reportData];
+                
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('tableControls').classList.remove('hidden');
+                document.getElementById('tableTitle').classList.remove('hidden');
+                document.getElementById('tableContainer').classList.remove('hidden');
+                
+                initializeFilters();
+                populateFilterDropdowns();
+                updateReportTable();
+                
+            } catch (error) {
+                console.error('Error loading Google Sheets data:', error);
+                document.getElementById('loadingIndicator').innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="h-8 w-8 mx-auto mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-red-600 font-semibold">Gagal memuat data dari Google Sheets</p>
+                        <p class="text-sm text-gray-500 mt-2">Mencoba beberapa metode koneksi...</p>
+                        <div class="mt-4 space-y-2">
+                            <button onclick="loadGoogleSheetsData()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                🔄 Coba Lagi
+                            </button>
+                            <button onclick="loadSampleData()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                                📋 Gunakan Data Sample
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3">Jika masalah berlanjut, coba refresh halaman</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load sample data as fallback
+        function loadSampleData() {
+            console.log('Loading sample data...');
+            
+            reportData = [
+                {
+                    admin: 'SIKO',
+                    cabang: 'Cab Gusti Hamzah',
+                    tanggal: '2024-01-15',
+                    waktu: '09:30:00',
+                    jenis: 'Rating Px',
+                    deskripsi: 'Pasien memberikan rating 5 bintang untuk pelayanan hari ini. Sangat puas dengan treatment yang diberikan.',
+                    photos: [],
+                    photoUrls: [],
+                    timestamp: '2024-01-15T09:30:00Z',
+                    rowNumber: 2
+                },
+                {
+                    admin: 'LUSI',
+                    cabang: 'Cab Gaia Mall',
+                    tanggal: '2024-01-15',
+                    waktu: '14:15:00',
+                    jenis: 'Bukti TRF',
+                    deskripsi: 'Transfer pembayaran dari pasien An. Sarah untuk treatment scaling. Total Rp 350.000',
+                    photos: [],
+                    photoUrls: [],
+                    timestamp: '2024-01-15T14:15:00Z',
+                    rowNumber: 3
+                },
+                {
+                    admin: 'SIKO',
+                    cabang: 'Cab Gusti Hamzah',
+                    tanggal: '2024-01-14',
+                    waktu: '16:45:00',
+                    jenis: 'Notes Invoice',
+                    deskripsi: 'Invoice #INV-2024-001 untuk pasien An. Budi. Treatment: Tambal gigi. Catatan: Pasien alergi obat tertentu.',
+                    photos: [],
+                    photoUrls: [],
+                    timestamp: '2024-01-14T16:45:00Z',
+                    rowNumber: 4
+                }
+            ];
+            
+            filteredData = [...reportData];
+            
+            document.getElementById('loadingIndicator').classList.add('hidden');
+            document.getElementById('tableControls').classList.remove('hidden');
+            document.getElementById('tableTitle').classList.remove('hidden');
+            document.getElementById('tableContainer').classList.remove('hidden');
+            
+            // Show sample data notice
+            const tableTitle = document.getElementById('tableTitle');
+            tableTitle.innerHTML = 'Data Laporan <span class="text-sm text-orange-600 font-normal">(Sample Data)</span>';
+            
+            initializeFilters();
+            populateFilterDropdowns();
+            updateReportTable();
+            
+            showNotification('Info', 'Menggunakan data sample karena tidak dapat terhubung ke Google Sheets. Data ini hanya untuk demo.', 'warning');
+        }
+
+        // Parse CSV row handling quoted values and commas
+        function parseCSVRow(row) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < row.length; i++) {
+                const char = row[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current.trim());
+            return result.map(val => val.replace(/"/g, ''));
+        }
+
+        // Populate filter dropdowns with unique values from data
+        function populateFilterDropdowns() {
+            const adminFilter = document.getElementById('adminFilter');
+            const cabangFilter = document.getElementById('cabangFilter');
+            const jenisFilter = document.getElementById('jenisFilter');
+            
+            // Get unique values
+            const uniqueAdmins = [...new Set(reportData.map(r => r.admin).filter(Boolean))].sort();
+            const uniqueCabangs = [...new Set(reportData.map(r => r.cabang).filter(Boolean))].sort();
+            const uniqueJenis = [...new Set(reportData.map(r => r.jenis).filter(Boolean))].sort();
+            
+            // Populate admin filter
+            adminFilter.innerHTML = '<option value="">Semua Admin</option>';
+            uniqueAdmins.forEach(admin => {
+                adminFilter.innerHTML += `<option value="${admin}">${admin}</option>`;
+            });
+            
+            // Populate cabang filter
+            cabangFilter.innerHTML = '<option value="">Semua Cabang</option>';
+            uniqueCabangs.forEach(cabang => {
+                cabangFilter.innerHTML += `<option value="${cabang}">${cabang}</option>`;
+            });
+            
+            // Populate jenis filter
+            jenisFilter.innerHTML = '<option value="">Semua Jenis</option>';
+            uniqueJenis.forEach(jenis => {
+                jenisFilter.innerHTML += `<option value="${jenis}">${jenis}</option>`;
+            });
+        }
+
+        // Numeric keypad functions for view PIN
+        function addPin(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                document.getElementById('pinDisplay').value = '•'.repeat(currentPin.length);
+            }
+        }
+
+        function deletePin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                document.getElementById('pinDisplay').value = '•'.repeat(currentPin.length);
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            document.getElementById('pinDisplay').value = '';
+        }
+
+        // Numeric keypad functions for delete PIN
+        function addDeletePin(digit) {
+            if (currentDeletePin.length < 4) {
+                currentDeletePin += digit;
+                document.getElementById('deletePinDisplay').value = '•'.repeat(currentDeletePin.length);
+            }
+        }
+
+        function deleteDeletePin() {
+            if (currentDeletePin.length > 0) {
+                currentDeletePin = currentDeletePin.slice(0, -1);
+                document.getElementById('deletePinDisplay').value = '•'.repeat(currentDeletePin.length);
+            }
+        }
+
+        function clearDeletePin() {
+            currentDeletePin = '';
+            document.getElementById('deletePinDisplay').value = '';
+        }
+
+        // Numeric keypad functions for manage PIN
+        function addManagePin(digit) {
+            if (currentManagePin.length < 4) {
+                currentManagePin += digit;
+                document.getElementById('managePinDisplay').value = '•'.repeat(currentManagePin.length);
+            }
+        }
+
+        function deleteManagePin() {
+            if (currentManagePin.length > 0) {
+                currentManagePin = currentManagePin.slice(0, -1);
+                document.getElementById('managePinDisplay').value = '•'.repeat(currentManagePin.length);
+            }
+        }
+
+        function clearManagePin() {
+            currentManagePin = '';
+            document.getElementById('managePinDisplay').value = '';
+        }
+
+        // PIN authentication
+        document.getElementById('submitPin').addEventListener('click', () => {
+            if (currentPin === '2114') {
+                isAuthenticated = true;
+                document.getElementById('pinModal').classList.add('hidden');
+                document.getElementById('reportTable').classList.remove('hidden');
+                loadGoogleSheetsData();
+                currentPin = '';
+                document.getElementById('pinDisplay').value = '';
+                document.getElementById('pinError').classList.add('hidden');
+            } else {
+                document.getElementById('pinError').classList.remove('hidden');
+                currentPin = '';
+                document.getElementById('pinDisplay').value = '';
+            }
+        });
+
+        document.getElementById('cancelPin').addEventListener('click', () => {
+            document.getElementById('pinModal').classList.add('hidden');
+            currentPin = '';
+            document.getElementById('pinDisplay').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+            switchTab('input');
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            isAuthenticated = false;
+            document.getElementById('reportTable').classList.add('hidden');
+            document.getElementById('pinModal').classList.remove('hidden');
+            currentPin = '';
+            document.getElementById('pinDisplay').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+        });
+
+        // Initialize filters and pagination
+        function initializeFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const dateFilter = document.getElementById('dateFilter');
+            const adminFilter = document.getElementById('adminFilter');
+            const cabangFilter = document.getElementById('cabangFilter');
+            const jenisFilter = document.getElementById('jenisFilter');
+            const resetButton = document.getElementById('resetSearch');
+            const refreshButton = document.getElementById('refreshData');
+            const itemsPerPageSelect = document.getElementById('itemsPerPage');
+
+            searchInput.addEventListener('input', applyFilters);
+            dateFilter.addEventListener('change', applyFilters);
+            adminFilter.addEventListener('change', applyFilters);
+            cabangFilter.addEventListener('change', applyFilters);
+            jenisFilter.addEventListener('change', applyFilters);
+            resetButton.addEventListener('click', resetFilters);
+            refreshButton.addEventListener('click', loadGoogleSheetsData);
+            itemsPerPageSelect.addEventListener('change', changeItemsPerPage);
+            
+            // Initialize pagination controls
+            initializePagination();
+        }
+        
+        // Initialize pagination controls
+        function initializePagination() {
+            document.getElementById('firstPage').addEventListener('click', () => goToPage(1));
+            document.getElementById('prevPage').addEventListener('click', () => goToPage(currentPage - 1));
+            document.getElementById('nextPage').addEventListener('click', () => goToPage(currentPage + 1));
+            document.getElementById('lastPage').addEventListener('click', () => goToPage(totalPages));
+        }
+        
+        // Change items per page
+        function changeItemsPerPage() {
+            const newItemsPerPage = document.getElementById('itemsPerPage').value;
+            itemsPerPage = newItemsPerPage === 'all' ? filteredData.length : parseInt(newItemsPerPage);
+            currentPage = 1; // Reset to first page
+            updateReportTable();
+        }
+        
+        // Go to specific page
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                updateReportTable();
+            }
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const dateFilter = document.getElementById('dateFilter').value;
+            const adminFilter = document.getElementById('adminFilter').value;
+            const cabangFilter = document.getElementById('cabangFilter').value;
+            const jenisFilter = document.getElementById('jenisFilter').value;
+
+            filteredData = reportData.filter(report => {
+                const matchesSearch = !searchTerm || 
+                    report.admin.toLowerCase().includes(searchTerm) ||
+                    report.cabang.toLowerCase().includes(searchTerm) ||
+                    report.jenis.toLowerCase().includes(searchTerm) ||
+                    report.deskripsi.toLowerCase().includes(searchTerm);
+
+                const matchesDate = !dateFilter || report.tanggal === dateFilter;
+                const matchesAdmin = !adminFilter || report.admin === adminFilter;
+                const matchesCabang = !cabangFilter || report.cabang === cabangFilter;
+                const matchesJenis = !jenisFilter || report.jenis === jenisFilter;
+
+                return matchesSearch && matchesDate && matchesAdmin && matchesCabang && matchesJenis;
+            });
+
+            // Reset to first page when filters change
+            currentPage = 1;
+            
+            // Update items per page if "all" is selected
+            const itemsPerPageSelect = document.getElementById('itemsPerPage');
+            if (itemsPerPageSelect.value === 'all') {
+                itemsPerPage = filteredData.length;
+            }
+            
+            updateReportTable();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('adminFilter').value = '';
+            document.getElementById('cabangFilter').value = '';
+            document.getElementById('jenisFilter').value = '';
+            document.getElementById('itemsPerPage').value = '5';
+            
+            filteredData = [...reportData];
+            currentPage = 1;
+            itemsPerPage = 5;
+            updateReportTable();
+        }
+
+        // Sort table
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            filteredData.sort((a, b) => {
+                let aVal = a[column] || '';
+                let bVal = b[column] || '';
+
+                if (column === 'tanggal') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+
+                if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            updateSortIcons();
+            updateReportTable();
+        }
+
+        // Update sort icons
+        function updateSortIcons() {
+            const icons = ['adminSortIcon', 'cabangSortIcon', 'tanggalSortIcon', 'waktuSortIcon', 'jenisSortIcon'];
+            icons.forEach(iconId => {
+                const icon = document.getElementById(iconId);
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>`;
+                icon.classList.remove('text-blue-500');
+                icon.classList.add('text-gray-400');
+            });
+
+            if (currentSort.column) {
+                const activeIcon = document.getElementById(currentSort.column + 'SortIcon');
+                if (activeIcon) {
+                    activeIcon.classList.remove('text-gray-400');
+                    activeIcon.classList.add('text-blue-500');
+                    if (currentSort.direction === 'asc') {
+                        activeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 15l4-4 4 4"></path>`;
+                    } else {
+                        activeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4 4 4-4"></path>`;
+                    }
+                }
+            }
+        }
+
+        // Update report table with pagination
+        function updateReportTable() {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            Tidak ada data yang ditemukan
+                        </td>
+                    </tr>
+                `;
+                updatePaginationInfo();
+                updatePaginationControls();
+                return;
+            }
+
+            // Calculate pagination
+            const itemsPerPageValue = document.getElementById('itemsPerPage').value;
+            if (itemsPerPageValue === 'all') {
+                itemsPerPage = filteredData.length;
+                totalPages = 1;
+                currentPage = 1;
+            } else {
+                itemsPerPage = parseInt(itemsPerPageValue);
+                totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                
+                // Ensure current page is valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+            }
+
+            // Get data for current page
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            pageData.forEach((report, pageIndex) => {
+                const globalIndex = startIndex + pageIndex;
+                const row = document.createElement('tr');
+                row.className = 'table-row';
+                
+                const photoCount = report.photos ? report.photos.length : 0;
+                const photoDisplay = photoCount > 0 ? `${photoCount} foto` : 'Tidak ada';
+                
+                row.innerHTML = `
+                    <td class="border border-gray-300 px-2 py-3 text-sm text-center">${globalIndex + 1}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">${report.admin}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">${report.cabang}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">${report.tanggal}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">${report.waktu}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">${report.jenis}</td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm">
+                        <div class="max-w-xs truncate" title="${report.deskripsi}">
+                            ${report.deskripsi}
+                        </div>
+                    </td>
+                    <td class="border border-gray-300 px-2 py-3 text-sm text-center">
+                        <span class="text-xs ${photoCount > 0 ? 'text-green-600' : 'text-gray-400'}">${photoDisplay}</span>
+                    </td>
+                    <td class="border border-gray-300 px-2 py-3 text-center">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="viewReportDetail(${globalIndex})" class="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200" title="Lihat Detail">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteReport(${globalIndex})" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200" title="Hapus">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                // Add click event to row (excluding action buttons)
+                row.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on action buttons
+                    if (!e.target.closest('button') && !e.target.closest('svg')) {
+                        viewReportDetail(globalIndex);
+                    }
+                });
+                
+                tbody.appendChild(row);
+            });
+
+            updatePaginationInfo();
+            updatePaginationControls();
+        }
+        
+        // Update pagination info
+        function updatePaginationInfo() {
+            const dataInfo = document.getElementById('dataInfo');
+            const totalItems = filteredData.length;
+            
+            if (totalItems === 0) {
+                dataInfo.textContent = 'Tidak ada data';
+                return;
+            }
+            
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            
+            if (document.getElementById('itemsPerPage').value === 'all') {
+                dataInfo.textContent = `Menampilkan semua ${totalItems} data`;
+            } else {
+                dataInfo.textContent = `Menampilkan ${startItem}-${endItem} dari ${totalItems} data`;
+            }
+        }
+        
+        // Update pagination controls
+        function updatePaginationControls() {
+            const firstPageBtn = document.getElementById('firstPage');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const lastPageBtn = document.getElementById('lastPage');
+            const pageNumbers = document.getElementById('pageNumbers');
+            
+            // Show/hide pagination if showing all items
+            const paginationNav = document.getElementById('paginationNav');
+            if (document.getElementById('itemsPerPage').value === 'all' || totalPages <= 1) {
+                paginationNav.style.opacity = '0.5';
+                paginationNav.style.pointerEvents = 'none';
+            } else {
+                paginationNav.style.opacity = '1';
+                paginationNav.style.pointerEvents = 'auto';
+            }
+            
+            // Update button states
+            firstPageBtn.disabled = currentPage === 1;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            lastPageBtn.disabled = currentPage === totalPages;
+            
+            // Generate page numbers
+            pageNumbers.innerHTML = '';
+            
+            // Show page numbers (max 5 visible)
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            // Adjust start if we're near the end
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                pageBtn.className = `px-3 py-2 border rounded-lg transition-colors duration-200 ${
+                    i === currentPage 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'border-gray-300 hover:bg-gray-100'
+                }`;
+                pageBtn.addEventListener('click', () => goToPage(i));
+                pageNumbers.appendChild(pageBtn);
+            }
+            
+            // Add ellipsis if needed
+            if (startPage > 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.className = 'px-2 py-2 text-gray-500';
+                pageNumbers.insertBefore(ellipsis, pageNumbers.firstChild);
+                
+                const firstBtn = document.createElement('button');
+                firstBtn.textContent = '1';
+                firstBtn.className = 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200';
+                firstBtn.addEventListener('click', () => goToPage(1));
+                pageNumbers.insertBefore(firstBtn, pageNumbers.firstChild);
+            }
+            
+            if (endPage < totalPages) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.className = 'px-2 py-2 text-gray-500';
+                pageNumbers.appendChild(ellipsis);
+                
+                const lastBtn = document.createElement('button');
+                lastBtn.textContent = totalPages;
+                lastBtn.className = 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors duration-200';
+                lastBtn.addEventListener('click', () => goToPage(totalPages));
+                pageNumbers.appendChild(lastBtn);
+            }
+        }
+
+        // View report detail
+        function viewReportDetail(index) {
+            const report = filteredData[index];
+            
+            document.getElementById('detailAdmin').textContent = report.admin;
+            document.getElementById('detailCabang').textContent = report.cabang;
+            document.getElementById('detailTanggal').textContent = report.tanggal;
+            document.getElementById('detailJenis').textContent = report.jenis;
+            document.getElementById('detailDeskripsi').textContent = report.deskripsi;
+            
+            // Display photos
+            const photosContainer = document.getElementById('detailPhotos');
+            photosContainer.innerHTML = '';
+            
+            if (report.photos && report.photos.length > 0) {
+                report.photos.forEach(photo => {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'relative group cursor-pointer';
+                    photoDiv.innerHTML = `
+                        <img src="${photo.url}" alt="${photo.label}" 
+                             class="w-full h-32 object-cover rounded-lg border border-gray-200 hover:border-blue-300 transition-colors duration-200"
+                             onclick="showFullscreenImage('${photo.url}', '${photo.label}')"
+                             onerror="this.parentElement.innerHTML='<div class=\\'w-full h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center\\'>Gambar tidak dapat dimuat</div>'">
+                        <div class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                            ${photo.label}
+                        </div>
+                    `;
+                    photosContainer.appendChild(photoDiv);
+                });
+            } else {
+                photosContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Tidak ada foto pendukung</p>';
+            }
+            
+            document.getElementById('reportDetailModal').classList.remove('hidden');
+        }
+
+        // Show fullscreen image
+        function showFullscreenImage(url, label) {
+            document.getElementById('fullscreenImage').src = url;
+            document.getElementById('imageLabel').textContent = label;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        // Close image modal with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('imageModal').classList.add('hidden');
+            }
+        });
+
+        // Delete report functionality
+        let reportToDelete = null;
+
+        function deleteReport(index) {
+            reportToDelete = filteredData[index];
+            
+            // Show report details in delete modal
+            document.getElementById('deleteReportDetails').innerHTML = `
+                <div><strong>Admin:</strong> ${reportToDelete.admin}</div>
+                <div><strong>Cabang:</strong> ${reportToDelete.cabang}</div>
+                <div><strong>Tanggal:</strong> ${reportToDelete.tanggal}</div>
+                <div><strong>Jenis:</strong> ${reportToDelete.jenis}</div>
+            `;
+            
+            document.getElementById('deletePinModal').classList.remove('hidden');
+        }
+
+        // Delete PIN verification
+        document.getElementById('confirmDeletePin').addEventListener('click', async () => {
+            if (currentDeletePin === '1412') {
+                try {
+                    // Send delete request to main webhook URL with complete report data
+                    const deleteData = {
+                        action: 'delete',
+                        row_number: reportToDelete.rowNumber,
+                        admin: reportToDelete.admin,
+                        cabang: reportToDelete.cabang,
+                        tanggal: reportToDelete.tanggal,
+                        waktu: reportToDelete.waktu,
+                        jenis: reportToDelete.jenis,
+                        deskripsi: reportToDelete.deskripsi,
+                        timestamp: reportToDelete.timestamp || new Date().toISOString()
+                    };
+                    
+                    // Add photo URLs if they exist
+                    if (reportToDelete.photoUrls && reportToDelete.photoUrls.length > 0) {
+                        reportToDelete.photoUrls.forEach((url, index) => {
+                            deleteData[`foto${index + 1}_url`] = url;
+                        });
+                    }
+                    
+                    const response = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(deleteData)
+                    });
+                    
+                    if (response.ok) {
+                        showNotification('Berhasil', 'Laporan berhasil dihapus dari sistem!', 'success');
+                        
+                        // Remove from local data and refresh table
+                        const originalIndex = reportData.findIndex(r => 
+                            r.admin === reportToDelete.admin && 
+                            r.tanggal === reportToDelete.tanggal && 
+                            r.waktu === reportToDelete.waktu &&
+                            r.rowNumber === reportToDelete.rowNumber
+                        );
+                        if (originalIndex !== -1) {
+                            reportData.splice(originalIndex, 1);
+                        }
+                        applyFilters();
+                    } else {
+                        throw new Error('Gagal menghapus data');
+                    }
+                } catch (error) {
+                    console.error('Error deleting report:', error);
+                    showNotification('Error', 'Gagal menghapus laporan dari sistem. Silakan coba lagi.', 'error');
+                }
+                
+                document.getElementById('deletePinModal').classList.add('hidden');
+                currentDeletePin = '';
+                document.getElementById('deletePinDisplay').value = '';
+                document.getElementById('deletePinError').classList.add('hidden');
+                
+            } else {
+                document.getElementById('deletePinError').classList.remove('hidden');
+                currentDeletePin = '';
+                document.getElementById('deletePinDisplay').value = '';
+            }
+        });
+
+        document.getElementById('cancelDeletePin').addEventListener('click', () => {
+            document.getElementById('deletePinModal').classList.add('hidden');
+            currentDeletePin = '';
+            document.getElementById('deletePinDisplay').value = '';
+            document.getElementById('deletePinError').classList.add('hidden');
+            reportToDelete = null;
+        });
+
+        // Management PIN authentication
+        document.getElementById('submitManagePin').addEventListener('click', () => {
+            if (currentManagePin === '1412') {
+                isManageAuthenticated = true;
+                document.getElementById('managePinModal').classList.add('hidden');
+                document.getElementById('dataManagement').classList.remove('hidden');
+                loadManagementData();
+                currentManagePin = '';
+                document.getElementById('managePinDisplay').value = '';
+                document.getElementById('managePinError').classList.add('hidden');
+            } else {
+                document.getElementById('managePinError').classList.remove('hidden');
+                currentManagePin = '';
+                document.getElementById('managePinDisplay').value = '';
+            }
+        });
+
+        document.getElementById('cancelManagePin').addEventListener('click', () => {
+            document.getElementById('managePinModal').classList.add('hidden');
+            currentManagePin = '';
+            document.getElementById('managePinDisplay').value = '';
+            document.getElementById('managePinError').classList.add('hidden');
+            switchTab('input');
+        });
+
+        // Management logout
+        document.getElementById('logoutManage').addEventListener('click', () => {
+            isManageAuthenticated = false;
+            document.getElementById('dataManagement').classList.add('hidden');
+            document.getElementById('managePinModal').classList.remove('hidden');
+            currentManagePin = '';
+            document.getElementById('managePinDisplay').value = '';
+            document.getElementById('managePinError').classList.add('hidden');
+        });
+
+        // Load management data
+        async function loadManagementData() {
+            try {
+                // Load Admin data
+                loadAdminData();
+                // Load Cabang data
+                loadCabangData();
+                // Load Jenis data
+                loadJenisData();
+            } catch (error) {
+                console.error('Error loading management data:', error);
+                showNotification('Error', 'Gagal memuat data untuk pengelolaan', 'error');
+            }
+        }
+
+        // Load Admin data for management
+        async function loadAdminData() {
+            const adminList = document.getElementById('adminList');
+            adminList.innerHTML = `
+                <div class="text-center py-4 text-gray-500">
+                    <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Memuat data admin...
+                </div>
+            `;
+
+            try {
+                const csvText = await fetchWithFallback(ADMIN_DATA_URL);
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                managementData.admin = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const values = parseCSVRow(rows[i]);
+                    if (values[0] && values[0].trim()) {
+                        managementData.admin.push(values[0].trim());
+                    }
+                }
+
+                displayAdminList();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                adminList.innerHTML = `
+                    <div class="text-center py-4 text-red-500">
+                        <svg class="h-6 w-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Gagal memuat data admin
+                    </div>
+                `;
+            }
+        }
+
+        // Load Cabang data for management
+        async function loadCabangData() {
+            const cabangList = document.getElementById('cabangList');
+            cabangList.innerHTML = `
+                <div class="text-center py-4 text-gray-500">
+                    <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Memuat data cabang...
+                </div>
+            `;
+
+            try {
+                const csvText = await fetchWithFallback(CABANG_DATA_URL);
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                managementData.cabang = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const values = parseCSVRow(rows[i]);
+                    if (values[0] && values[0].trim()) {
+                        managementData.cabang.push(values[0].trim());
+                    }
+                }
+
+                displayCabangList();
+            } catch (error) {
+                console.error('Error loading cabang data:', error);
+                cabangList.innerHTML = `
+                    <div class="text-center py-4 text-red-500">
+                        <svg class="h-6 w-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Gagal memuat data cabang
+                    </div>
+                `;
+            }
+        }
+
+        // Load Jenis data for management
+        async function loadJenisData() {
+            const jenisList = document.getElementById('jenisList');
+            jenisList.innerHTML = `
+                <div class="text-center py-4 text-gray-500">
+                    <svg class="animate-spin h-6 w-6 mx-auto mb-2" style="color: #5DC0C5;" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Memuat data jenis laporan...
+                </div>
+            `;
+
+            try {
+                const csvText = await fetchWithFallback(JENIS_DATA_URL);
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                managementData.jenis = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const values = parseCSVRow(rows[i]);
+                    if (values[0] && values[0].trim()) {
+                        managementData.jenis.push(values[0].trim());
+                    }
+                }
+
+                displayJenisList();
+            } catch (error) {
+                console.error('Error loading jenis data:', error);
+                jenisList.innerHTML = `
+                    <div class="text-center py-4 text-red-500">
+                        <svg class="h-6 w-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Gagal memuat data jenis laporan
+                    </div>
+                `;
+            }
+        }
+
+        // Display functions
+        function displayAdminList() {
+            const adminList = document.getElementById('adminList');
+            if (managementData.admin.length === 0) {
+                adminList.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        Belum ada data admin
+                    </div>
+                `;
+                return;
+            }
+
+            adminList.innerHTML = managementData.admin.map((admin, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-800">${admin}</span>
+                    <button onclick="deleteAdmin(${index})" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200" title="Hapus">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function displayCabangList() {
+            const cabangList = document.getElementById('cabangList');
+            if (managementData.cabang.length === 0) {
+                cabangList.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        Belum ada data cabang
+                    </div>
+                `;
+                return;
+            }
+
+            cabangList.innerHTML = managementData.cabang.map((cabang, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-800">${cabang}</span>
+                    <button onclick="deleteCabang(${index})" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200" title="Hapus">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function displayJenisList() {
+            const jenisList = document.getElementById('jenisList');
+            if (managementData.jenis.length === 0) {
+                jenisList.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        Belum ada data jenis laporan
+                    </div>
+                `;
+                return;
+            }
+
+            jenisList.innerHTML = managementData.jenis.map((jenis, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-800">${jenis}</span>
+                    <button onclick="deleteJenis(${index})" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200" title="Hapus">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Add/Delete functions
+        function deleteAdmin(index) {
+            if (confirm(`Hapus admin "${managementData.admin[index]}"?`)) {
+                managementData.admin.splice(index, 1);
+                displayAdminList();
+                // Update dropdown data
+                dropdownData.admin = new Set(managementData.admin);
+                populateDropdowns();
+                showNotification('Berhasil', 'Data admin berhasil dihapus', 'success');
+            }
+        }
+
+        function deleteCabang(index) {
+            if (confirm(`Hapus cabang "${managementData.cabang[index]}"?`)) {
+                managementData.cabang.splice(index, 1);
+                displayCabangList();
+                // Update dropdown data
+                dropdownData.cabang = new Set(managementData.cabang);
+                populateDropdowns();
+                showNotification('Berhasil', 'Data cabang berhasil dihapus', 'success');
+            }
+        }
+
+        function deleteJenis(index) {
+            if (confirm(`Hapus jenis laporan "${managementData.jenis[index]}"?`)) {
+                managementData.jenis.splice(index, 1);
+                displayJenisList();
+                // Update dropdown data
+                dropdownData.jenis = new Set(managementData.jenis);
+                populateDropdowns();
+                showNotification('Berhasil', 'Data jenis laporan berhasil dihapus', 'success');
+            }
+        }
+
+        // Add button event listeners
+        document.getElementById('addAdmin').addEventListener('click', () => {
+            const newAdmin = document.getElementById('newAdmin').value.trim();
+            if (newAdmin && !managementData.admin.includes(newAdmin)) {
+                managementData.admin.push(newAdmin);
+                displayAdminList();
+                document.getElementById('newAdmin').value = '';
+                // Update dropdown data
+                dropdownData.admin = new Set(managementData.admin);
+                populateDropdowns();
+                showNotification('Berhasil', 'Admin baru berhasil ditambahkan', 'success');
+            } else if (managementData.admin.includes(newAdmin)) {
+                showNotification('Peringatan', 'Admin sudah ada dalam daftar', 'warning');
+            } else {
+                showNotification('Error', 'Nama admin tidak boleh kosong', 'error');
+            }
+        });
+
+        document.getElementById('addCabang').addEventListener('click', () => {
+            const newCabang = document.getElementById('newCabang').value.trim();
+            if (newCabang && !managementData.cabang.includes(newCabang)) {
+                managementData.cabang.push(newCabang);
+                displayCabangList();
+                document.getElementById('newCabang').value = '';
+                // Update dropdown data
+                dropdownData.cabang = new Set(managementData.cabang);
+                populateDropdowns();
+                showNotification('Berhasil', 'Cabang baru berhasil ditambahkan', 'success');
+            } else if (managementData.cabang.includes(newCabang)) {
+                showNotification('Peringatan', 'Cabang sudah ada dalam daftar', 'warning');
+            } else {
+                showNotification('Error', 'Nama cabang tidak boleh kosong', 'error');
+            }
+        });
+
+        document.getElementById('addJenis').addEventListener('click', () => {
+            const newJenis = document.getElementById('newJenis').value.trim();
+            if (newJenis && !managementData.jenis.includes(newJenis)) {
+                managementData.jenis.push(newJenis);
+                displayJenisList();
+                document.getElementById('newJenis').value = '';
+                // Update dropdown data
+                dropdownData.jenis = new Set(managementData.jenis);
+                populateDropdowns();
+                showNotification('Berhasil', 'Jenis laporan baru berhasil ditambahkan', 'success');
+            } else if (managementData.jenis.includes(newJenis)) {
+                showNotification('Peringatan', 'Jenis laporan sudah ada dalam daftar', 'warning');
+            } else {
+                showNotification('Error', 'Nama jenis laporan tidak boleh kosong', 'error');
+            }
+        });
+
+        // Refresh button event listeners
+        document.getElementById('refreshAdmin').addEventListener('click', loadAdminData);
+        document.getElementById('refreshCabang').addEventListener('click', loadCabangData);
+        document.getElementById('refreshJenis').addEventListener('click', loadJenisData);
+
+        // Enter key support for add inputs
+        document.getElementById('newAdmin').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('addAdmin').click();
+            }
+        });
+
+        document.getElementById('newCabang').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('addCabang').click();
+            }
+        });
+
+        document.getElementById('newJenis').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('addJenis').click();
+            }
+        });
+
+        // File upload functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fotoInput = document.getElementById('fotoInput');
+        const previewArea = document.getElementById('previewArea');
+        let selectedFiles = [];
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fotoInput.click();
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            handleFiles(files);
+        });
+
+        // File input change
+        fotoInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        // Handle selected files
+        function handleFiles(files) {
+            // Limit to 5 files total
+            const remainingSlots = 5 - selectedFiles.length;
+            
+            if (remainingSlots <= 0) {
+                showNotification('Peringatan', 'Maksimal 5 foto dapat diupload. Hapus foto yang ada terlebih dahulu jika ingin mengganti.', 'warning');
+                return;
+            }
+            
+            const filesToAdd = files.slice(0, remainingSlots);
+            let addedCount = 0;
+            let oversizeCount = 0;
+            
+            filesToAdd.forEach(file => {
+                if (file.size <= 10 * 1024 * 1024) { // 10MB limit
+                    selectedFiles.push(file);
+                    addedCount++;
+                } else {
+                    oversizeCount++;
+                }
+            });
+            
+            // Show feedback messages
+            if (addedCount > 0) {
+                const remaining = 5 - selectedFiles.length;
+                if (remaining > 0) {
+                    showNotification('Berhasil', `${addedCount} foto berhasil ditambahkan. Anda masih bisa menambah ${remaining} foto lagi.`, 'success');
+                } else {
+                    showNotification('Berhasil', `${addedCount} foto berhasil ditambahkan. Batas maksimal 5 foto tercapai.`, 'success');
+                }
+            }
+            
+            if (oversizeCount > 0) {
+                showNotification('Peringatan', `${oversizeCount} foto tidak dapat diupload karena ukuran melebihi 10MB.`, 'warning');
+            }
+            
+            if (files.length > filesToAdd.length && remainingSlots < files.length) {
+                const skipped = files.length - filesToAdd.length;
+                showNotification('Info', `${skipped} foto tidak diupload karena melebihi batas maksimal 5 foto.`, 'warning');
+            }
+            
+            updatePreview();
+            updateUploadAreaText();
+        }
+
+        // Update preview
+        function updatePreview() {
+            if (selectedFiles.length === 0) {
+                previewArea.classList.add('hidden');
+                return;
+            }
+            
+            previewArea.classList.remove('hidden');
+            previewArea.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative group';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}" class="preview-image border border-gray-300">
+                        <button type="button" onclick="removeFile(${index})" 
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors duration-200">
+                            ×
+                        </button>
+                        <div class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                            FOTO ${index + 1}
+                        </div>
+                    `;
+                    previewArea.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Update upload area text based on current file count
+        function updateUploadAreaText() {
+            const uploadContent = document.getElementById('uploadContent');
+            const remaining = 5 - selectedFiles.length;
+            
+            if (selectedFiles.length === 0) {
+                uploadContent.innerHTML = `
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p class="text-lg font-medium text-gray-700 mb-2">Klik untuk Upload Foto</p>
+                    <p class="text-sm text-gray-500">atau drag & drop file gambar di sini</p>
+                    <p class="text-xs text-gray-400 mt-2">PNG, JPG, JPEG hingga 10MB (Maksimal 5 foto)</p>
+                `;
+            } else if (remaining > 0) {
+                uploadContent.innerHTML = `
+                    <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p class="text-sm font-medium text-gray-700 mb-1">Tambah ${remaining} foto lagi</p>
+                    <p class="text-xs text-gray-500">Klik atau drag & drop</p>
+                `;
+            } else {
+                uploadContent.innerHTML = `
+                    <svg class="mx-auto h-8 w-8 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-sm font-medium text-green-600 mb-1">Maksimal 5 foto tercapai</p>
+                    <p class="text-xs text-gray-500">Hapus foto jika ingin mengganti</p>
+                `;
+                uploadArea.style.pointerEvents = 'none';
+                uploadArea.style.opacity = '0.6';
+                return;
+            }
+            
+            // Reset upload area if not at limit
+            uploadArea.style.pointerEvents = 'auto';
+            uploadArea.style.opacity = '1';
+        }
+
+        // Remove file
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updatePreview();
+            updateUploadAreaText();
+        }
+
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Form submission
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const admin = document.getElementById('admin').value;
+            const cabang = document.getElementById('cabang').value;
+            const tanggal = document.getElementById('tanggal').value;
+            const jenis = document.getElementById('jenis').value;
+            const deskripsi = document.getElementById('deskripsi').value;
+            
+            if (!admin || !cabang || !tanggal || !jenis || !deskripsi) {
+                showNotification('Error', 'Mohon lengkapi semua field yang wajib diisi!', 'error');
+                return;
+            }
+            
+            try {
+                // Get current time in Jakarta timezone
+                const now = new Date();
+                const jakartaTime = new Intl.DateTimeFormat('id-ID', {
+                    timeZone: 'Asia/Jakarta',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).format(now);
+                
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('admin', admin);
+                formData.append('cabang', cabang);
+                formData.append('tanggal', tanggal);
+                formData.append('waktu', jakartaTime);
+                formData.append('jenis', jenis);
+                formData.append('deskripsi', deskripsi);
+                formData.append('timestamp', now.toISOString());
+                formData.append('action', 'new_input'); // Flag untuk data input baru
+                
+                // Append photos as binary files
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    formData.append(`foto${i + 1}`, selectedFiles[i], selectedFiles[i].name);
+                }
+                
+                // Send to N8N webhook
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showNotification('Berhasil!', 'Laporan berhasil dikirim ke sistem!', 'success');
+                    
+                    // Reset form
+                    document.getElementById('reportForm').reset();
+                    selectedFiles = [];
+                    updatePreview();
+                    updateUploadAreaText();
+                    document.getElementById('tanggal').valueAsDate = new Date();
+                } else {
+                    throw new Error('Gagal mengirim data');
+                }
+                
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showNotification('Error', 'Gagal mengirim laporan. Silakan coba lagi.', 'error');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'976ddb4ab22dc6f6',t:'MTc1NjQ4OTQ2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
